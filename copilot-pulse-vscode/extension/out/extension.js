@@ -14,6 +14,7 @@ const CopilotPulseModelProvider_1 = require("./proxy/CopilotPulseModelProvider")
 const ConversationState_1 = require("./routing/ConversationState");
 const EscalationPolicy_1 = require("./routing/EscalationPolicy");
 const PromptFeatures_1 = require("./routing/PromptFeatures");
+const MultiAgentOrchestrator_1 = require("./routing/MultiAgentOrchestrator");
 // Model IDs/families discovered from the GitHub Copilot subscription.
 // These drive the dynamic Light/Medium/Heavy tiering.
 let availableModelsCache = [];
@@ -918,6 +919,26 @@ function activate(context) {
             // which is far worse than the extra tokens. Context-window pressure is
             // handled reactively by the overflow-recovery ladder instead.
             const cleanUserPrompt = (request.prompt || "").replace(/^@copilotpulse\s*/i, "").trim();
+            
+            // Check if Multi-Agent Orchestrator should handle this multi-task request
+            const multiAgentEnabled = vscode.workspace.getConfiguration("copilotPulse").get("multiAgent.enabled", true);
+            if (multiAgentEnabled) {
+                try {
+                    const handled = await MultiAgentOrchestrator_1.MultiAgentOrchestrator.executeIfMultiTask(request, chatContext, stream, token, {
+                        pickCopilotModel,
+                        discoverCopilotModels,
+                        proxyServer,
+                        getRouterConfig,
+                        availableModels: availableModelsCache
+                    });
+                    if (handled) {
+                        return;
+                    }
+                } catch (orchErr) {
+                    console.warn("[Copilot Pulse] MultiAgentOrchestrator failed, falling back to single model turn:", orchErr);
+                }
+            }
+
             const offerTools = allTools.length > 0 &&
                 (0, PromptFeatures_1.requiresTools)(cleanUserPrompt, {
                     conversationUsedTools: ConversationState_1.conversationStore.hasUsedTools(conversationId)

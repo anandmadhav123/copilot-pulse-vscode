@@ -220,6 +220,16 @@
             "user_dissatisfaction"
           ],
           "description": "Which failure signals are allowed to trigger an automatic escalation."
+        },
+        "copilotPulse.multiAgent.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable parallel multi-agent decomposition and orchestration for multi-task prompts."
+        },
+        "copilotPulse.multiAgent.maxParallelWorkers": {
+          "type": "number",
+          "default": 4,
+          "description": "Maximum number of parallel sub-agent workers to execute concurrently."
         }
       }
     }
