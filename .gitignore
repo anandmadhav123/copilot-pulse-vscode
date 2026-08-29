@@ -3,6 +3,10 @@
 .env.local
 *.env
 
+# Build packages & binaries
+*.vsix
+*.js.map
+
 # Dependency directories
 node_modules/
 
