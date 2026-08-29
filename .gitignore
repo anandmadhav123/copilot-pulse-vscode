@@ -3,8 +3,7 @@
 .env.local
 *.env
 
-# Build packages & binaries
-*.vsix
+# Sourcemaps
 *.js.map
 
 # Dependency directories
