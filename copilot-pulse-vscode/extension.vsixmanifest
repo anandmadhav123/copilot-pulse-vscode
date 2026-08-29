@@ -9,9 +9,13 @@
     <GalleryFlags>Public</GalleryFlags>
     <Properties>
       <Property Id="Microsoft.VisualStudio.Code.Engine" Value="^1.95.0" />
-      <Property Id="Microsoft.VisualStudio.Services.Links.Source" Value="https://github.com/your-org/copilot-pulse-vscode" />
-      <Property Id="Microsoft.VisualStudio.Services.Links.GitHub" Value="https://github.com/your-org/copilot-pulse-vscode" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.Source" Value="https://github.com/anandmadhav123/copilot-pulse-vscode" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.Getstarted" Value="https://github.com/anandmadhav123/copilot-pulse-vscode#readme" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.GitHub" Value="https://github.com/anandmadhav123/copilot-pulse-vscode" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.Support" Value="https://github.com/anandmadhav123/copilot-pulse-vscode/issues" />
     </Properties>
+    <Icon>extension/icon.png</Icon>
+    <License>extension/LICENSE</License>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Code" />

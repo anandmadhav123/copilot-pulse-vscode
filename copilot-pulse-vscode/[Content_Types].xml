@@ -5,5 +5,9 @@
   <Default Extension="map" ContentType="application/json"/>
   <Default Extension="md" ContentType="text/markdown"/>
   <Default Extension="png" ContentType="image/png"/>
+  <Default Extension="txt" ContentType="text/plain"/>
   <Default Extension="vsixmanifest" ContentType="text/xml"/>
+  <Override PartName="/extension/LICENSE" ContentType="text/plain"/>
+  <Override PartName="/extension/LICENSE.txt" ContentType="text/plain"/>
+  <Override PartName="/extension/LICENSE.md" ContentType="text/markdown"/>
 </Types>
