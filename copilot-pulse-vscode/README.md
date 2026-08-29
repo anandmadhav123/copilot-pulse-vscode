@@ -121,4 +121,4 @@ You can customize Copilot Pulse via the VS Code Settings UI or directly in `.vsc
 
 * **Publisher:** Copilot Pulse
 * **License:** [MIT License](./LICENSE)
-* **Support & Issues:** [GitHub Issues](https://github.com/anandmadhav123/copilot-pulse-vscode/issues)
+* **Support & Issues:** [GitHub Issues](https://github.com/your-org/copilot-pulse-vscode/issues)
