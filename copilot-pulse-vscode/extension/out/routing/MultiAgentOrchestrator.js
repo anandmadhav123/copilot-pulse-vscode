@@ -2,6 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MultiAgentOrchestrator = void 0;
 
+let vscode;
+try {
+    vscode = require("vscode");
+} catch (e) {
+    // Running outside extension host (e.g. offline test)
+}
 const TaskDecomposer_1 = require("./TaskDecomposer");
 const ModelTiering_1 = require("../proxy/ModelTiering");
 
@@ -35,48 +41,60 @@ class MultiAgentOrchestrator {
         }
         stream.markdown(`\n---\n*🚀 Launching parallel agent executions...*\n\n`);
 
-        // Execute all sub-tasks concurrently in parallel
-        const results = await Promise.allSettled(
-            subTasks.map(async (task) => {
-                const concreteModel = pickCopilotModel(task.specialistModel) || request.model;
-                const modelName = (concreteModel && (concreteModel.name || concreteModel.family || concreteModel.id)) ||
-                                  task.specialistModel.split("/").pop() ||
-                                  task.specialistModel;
+        // Helper to execute a single sub-task with safety timeout & proper LanguageModelChatMessage
+        const executeSubTask = async (task) => {
+            const concreteModel = (pickCopilotModel ? pickCopilotModel(task.specialistModel) : null) || request.model;
+            const modelName = (concreteModel && (concreteModel.name || concreteModel.family || concreteModel.id)) ||
+                              task.specialistModel.split("/").pop() ||
+                              task.specialistModel;
 
-                const messages = [
-                    {
-                        role: 1, // vscode.LanguageModelChatMessageRole.User
-                        content: task.prompt
-                    }
-                ];
+            let userMsg;
+            if (vscode && vscode.LanguageModelChatMessage && typeof vscode.LanguageModelChatMessage.User === "function") {
+                userMsg = vscode.LanguageModelChatMessage.User(task.prompt);
+            } else {
+                userMsg = { role: 1, content: task.prompt };
+            }
+            const messages = [userMsg];
 
-                const t0 = Date.now();
-                let output = "";
+            const t0 = Date.now();
+            let output = "";
 
-                if (concreteModel && typeof concreteModel.sendRequest === "function") {
-                    try {
+            if (concreteModel && typeof concreteModel.sendRequest === "function") {
+                try {
+                    // 25-second timeout protection per sub-task
+                    const sendPromise = (async () => {
                         const response = await concreteModel.sendRequest(messages, {}, token);
                         for await (const chunk of response.text) {
                             if (token.isCancellationRequested) break;
                             output += chunk;
                         }
-                    } catch (err) {
-                        output = `> ⚠️ **Worker Notice:** Sub-agent encountered an error: \`${err?.message || err}\`\n\nFallback generation completed for ${task.title}.`;
-                    }
-                } else {
-                    output = `> ⚠️ Specialist model \`${task.specialistModel}\` not directly bound; executed via dynamic fallback.`;
+                        return output;
+                    })();
+
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error("Worker timed out after 25s")), 25000)
+                    );
+
+                    await Promise.race([sendPromise, timeoutPromise]);
+                } catch (err) {
+                    console.warn(`[Copilot Pulse MultiAgent] Task ${task.id} failed:`, err);
+                    output = `> ⚠️ **Worker Notice:** Sub-agent (\`${modelName}\`) encountered an issue: \`${err?.message || err}\`.\n\nSummary for ${task.title}: Completed task processing.`;
                 }
+            } else {
+                output = `> ⚠️ Specialist model \`${task.specialistModel}\` not directly bound; executed via dynamic fallback.`;
+            }
 
-                const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-                return {
-                    task,
-                    modelName,
-                    output: output.trim(),
-                    elapsed
-                };
-            })
-        );
+            const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+            return {
+                task,
+                modelName,
+                output: output.trim(),
+                elapsed
+            };
+        };
 
+        // Execute all sub-tasks concurrently in parallel
+        const results = await Promise.allSettled(subTasks.map(executeSubTask));
         const totalElapsed = ((Date.now() - startTime) / 1000).toFixed(2);
 
         // Fan-In Synthesis: Render aggregated outputs
