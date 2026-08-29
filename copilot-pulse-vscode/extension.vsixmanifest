@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="copilot-pulse-vscode" Version="1.0.0" Publisher="copilot-pulse" />
+    <DisplayName>Copilot Pulse</DisplayName>
+    <Description xml:space="preserve">⚡ Intelligent Model Router &amp; Savings Engine for GitHub Copilot in VS Code</Description>
+    <Tags>AI,copilot,github copilot,model router,llm,agent,cost savings</Tags>
+    <Categories>AI,Other</Categories>
+    <GalleryFlags>Public</GalleryFlags>
+    <Properties>
+      <Property Id="Microsoft.VisualStudio.Code.Engine" Value="^1.95.0" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.Source" Value="https://github.com/your-org/copilot-pulse-vscode" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.GitHub" Value="https://github.com/your-org/copilot-pulse-vscode" />
+    </Properties>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Code" />
+  </Installation>
+  <Dependencies />
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.Changelog" Path="extension/CHANGELOG.md" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.License" Path="extension/LICENSE" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/icon.png" Addressable="true" />
+  </Assets>
+</PackageManifest>

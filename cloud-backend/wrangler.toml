@@ -1,0 +1,5 @@
+name = "copilot-pulse-api"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+
+# 100% Free Plan: 100,000 requests/day, 0 cost

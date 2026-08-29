@@ -1,0 +1,20 @@
+# Environment variables & secrets
+.env
+.env.local
+*.env
+
+# Dependency directories
+node_modules/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Cloudflare & build artifacts
+.wrangler/
+dist/

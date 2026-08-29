@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: copilot-pulse-api
+    env: node
+    plan: free
+    buildCommand: "npm install --production"
+    startCommand: "node src/server.js"
+    healthCheckPath: /health
+    autoDeploy: true
